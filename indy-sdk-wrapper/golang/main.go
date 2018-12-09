@@ -1,6 +1,6 @@
 package main
 
-import "./indysdk"
+import "github.com/sasiedu/SSI-Sovrin/indy-sdk-wrapper/golang/indysdk"
 
 func main() {
 	config := indysdk.WalletConfig{
