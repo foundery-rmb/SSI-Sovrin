@@ -23,18 +23,18 @@ import "C"
 import (
 	"fmt"
 
-	//log "github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
-var future = make (chan C.indy_error_t)
+var future = make(chan C.indy_error_t)
 
 //export goIndyCallback
 func goIndyCallback(commandHandle C.indy_handle_t, indyError C.indy_error_t) {
-	//log.Debug("This is the indy callback")
+	log.Debug("This is the indy callback")
 	future <- indyError
 }
 
-func callIndy(config string, credential string) (chan C.indy_error_t) {
+func callIndy(config string, credential string) chan C.indy_error_t {
 	commandHandle := (C.indy_handle_t)(C.int(1))
 
 	indyError := C.indy_create_wallet(commandHandle, C.CString(config), C.CString(credential), C.get_indy_callback())

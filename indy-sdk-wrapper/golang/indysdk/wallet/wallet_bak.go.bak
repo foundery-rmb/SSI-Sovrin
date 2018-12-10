@@ -1,0 +1,27 @@
+package indysdk
+
+import "C"
+
+import (
+	"encoding/json"
+	"fmt"
+)
+
+func CreateWallet(config WalletConfig, credential WalletCredential) error {
+	config, credential = setDefaults(config, credential)
+
+	jsonConfig, err := json.Marshal(config)
+	if err != nil {
+		return err
+	}
+	jsonCredential, err := json.Marshal(credential)
+	if err != nil {
+		return err
+	}
+
+	res_future := callIndy(string(jsonConfig), string(jsonCredential))
+	res := <-res_future
+	fmt.Println("Res: ", res)
+
+	return nil
+}

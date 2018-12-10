@@ -1,14 +1,14 @@
 package main
 
-import "github.com/sasiedu/SSI-Sovrin/indy-sdk-wrapper/golang/indysdk"
+import "github.com/sasiedu/SSI-Sovrin/indy-sdk-wrapper/golang/indysdk/wallet"
 
 func main() {
-	config := indysdk.WalletConfig{
+	config := wallet.WalletConfig{
 		ID: "alice-20",
 	}
-	credentials := indysdk.WalletCredential{
+	credentials := wallet.WalletCredential{
 		Key: "test-alice",
 	}
 
-	indysdk.CreateWallet(config, credentials)
+	wallet.CreateWallet(config, credentials)
 }
