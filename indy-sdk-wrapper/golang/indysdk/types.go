@@ -7,3 +7,6 @@ type WalletConfig wallet.Config
 
 // WalletCredential represents Indy wallet credential
 type WalletCredential wallet.Credential
+
+// WalletExportConfig represents Indy wallet export config
+type WalletExportConfig wallet.ExportConfig

@@ -15,8 +15,15 @@ type Config struct {
 // Credential represents Indy wallet credential config
 type Credential struct {
 	Key                   string `json:"key"`
-	Rekey                 string `json:"rekey"`
+	Rekey                 string `json:"rekey,omitempty"`
 	StorageCredentials    string `json:"storage_credentials"`
-	KeyDerivationMethod   string `json:"key_derivation_method"`
-	ReKeyDerivationMethod string `json:"rekey_derivation_method"`
+	KeyDerivationMethod   string `json:"key_derivation_method,omitempty"`
+	ReKeyDerivationMethod string `json:"rekey_derivation_method,omitempty"`
+}
+
+// ExportConfig represents Indy wallet export config
+type ExportConfig struct {
+	Path                string `json:"path"`
+	Key                 string `json:"key"`
+	KeyDerivationMethod string `json:"key_derivation_method,omitempty"`
 }
