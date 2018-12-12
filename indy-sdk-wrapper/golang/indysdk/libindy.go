@@ -21,6 +21,9 @@ func CreateWallet(config WalletConfig, credential WalletCredential) error {
 func OpenWallet(config WalletConfig, credential WalletCredential) (int, error) {
 	channel := wallet.IndyOpenWallet((wallet.Config)(config), (wallet.Credential)(credential))
 	result := <-channel
+	if result.Error != nil {
+		return 0, result.Error
+	}
 	return result.Results[0].(int), result.Error
 }
 

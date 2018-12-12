@@ -161,3 +161,38 @@ func IndyCloseWallet(walletHandle int) chan utils.IndyResult {
 
 	return future
 }
+
+// IndyImportWallet creates a new secure wallet and then imports its content according to fields provided in importConfig
+func IndyImportWallet(config Config, credential Credential, importConfig ImportConfig) chan utils.IndyResult {
+	config, credential = setDefaults(config, credential)
+	handle, future := utils.NewFutureCommand()
+
+	jsonConfig, err := json.Marshal(config)
+	if err != nil {
+		go func() { utils.RemoveFuture((int)(handle), utils.IndyResult{Error: err}) }()
+		return future
+	}
+	jsonCredential, err := json.Marshal(credential)
+	if err != nil {
+		go func() { utils.RemoveFuture((int)(handle), utils.IndyResult{Error: err}) }()
+		return future
+	}
+	jsonImport, err := json.Marshal(importConfig)
+	if err != nil {
+		go func() { utils.RemoveFuture((int)(handle), utils.IndyResult{Error: err}) }()
+		return future
+	}
+
+	configString := string(jsonConfig)
+	credentialString := string(jsonCredential)
+	importString := string(jsonImport)
+	commandHandle := (C.indy_handle_t)(handle)
+	res := C.indy_import_wallet(commandHandle, C.CString(configString), C.CString(credentialString), C.CString(importString), C.get_default_callback())
+	if res != 0 {
+		errMsg := utils.GetIndyError(int(res))
+		go func() { utils.RemoveFuture((int)(handle), utils.IndyResult{Error: errors.New(errMsg)}) }()
+		return future
+	}
+
+	return future
+}

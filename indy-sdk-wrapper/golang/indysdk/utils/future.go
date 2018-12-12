@@ -6,9 +6,6 @@ package utils
 #include <wrapper.h>
 */
 import "C"
-import (
-	"time"
-)
 
 // IndyResult represents callback result from C-call to libindy
 type IndyResult struct {
@@ -17,13 +14,14 @@ type IndyResult struct {
 }
 
 var futures = make(map[C.indy_handle_t](chan IndyResult))
+var count int32
 
 // NewFutureCommand creates a new future command
 func NewFutureCommand() (C.indy_handle_t, chan IndyResult) {
-	handle := int32(time.Now().Unix())
-	commandHandle := (C.indy_handle_t)(handle)
+	commandHandle := (C.indy_handle_t)(count)
 	future := make(chan IndyResult)
 	futures[commandHandle] = future
+	count = count + 1
 	return commandHandle, future
 }
 

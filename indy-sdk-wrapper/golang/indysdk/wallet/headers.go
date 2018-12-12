@@ -27,3 +27,9 @@ type ExportConfig struct {
 	Key                 string `json:"key"`
 	KeyDerivationMethod string `json:"key_derivation_method,omitempty"`
 }
+
+// ImportConfig represents Indy wallet import config
+type ImportConfig struct {
+	Path string `json:"path"`
+	Key  string `json:"key"`
+}
