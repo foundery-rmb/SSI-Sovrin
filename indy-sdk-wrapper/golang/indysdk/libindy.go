@@ -37,3 +37,10 @@ func DeleteWallet(config WalletConfig, credential WalletCredential) error {
 	result := <-channel
 	return result.Error
 }
+
+// CloseWallet closes an opened wallet
+func CloseWallet(walletHandle int) error {
+	channel := wallet.IndyCloseWallet(walletHandle)
+	result := <-channel
+	return result.Error
+}

@@ -146,3 +146,18 @@ func IndyDeleteWallet(config Config, credential Credential) chan utils.IndyResul
 
 	return future
 }
+
+// IndyCloseWallet closes an already opened indy wallet
+func IndyCloseWallet(walletHandle int) chan utils.IndyResult {
+	handle, future := utils.NewFutureCommand()
+
+	commandHandle := (C.indy_handle_t)(handle)
+	wh := (C.indy_handle_t)(walletHandle)
+	if res := C.indy_close_wallet(commandHandle, wh, C.get_default_callback()); res != 0 {
+		errMsg := utils.GetIndyError(int(res))
+		go func() { utils.RemoveFuture((int)(handle), utils.IndyResult{Error: errors.New(errMsg)}) }()
+		return future
+	}
+
+	return future
+}
