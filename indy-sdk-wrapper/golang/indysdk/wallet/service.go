@@ -9,6 +9,7 @@ import "C"
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 
@@ -21,7 +22,8 @@ func defaultCallback(commandHandle C.indy_handle_t, indyError C.indy_error_t, va
 	if indyError == 0 {
 		utils.RemoveFuture((int)(commandHandle), utils.IndyResult{Error: nil, Results: []interface{}{int(value)}})
 	} else {
-		utils.RemoveFuture((int)(commandHandle), utils.IndyResult{Error: fmt.Errorf("%v", int(indyError))})
+		errMsg := utils.GetIndyError(int(indyError))
+		utils.RemoveFuture((int)(commandHandle), utils.IndyResult{Error: errors.New(errMsg)})
 	}
 }
 
@@ -57,7 +59,8 @@ func IndyCreateWallet(config Config, credential Credential) chan utils.IndyResul
 	fmt.Println("Creating wallet with commandHandle", commandHandle, "with config", configString, "and credential", credentialString)
 	res := C.indy_create_wallet(commandHandle, C.CString(configString), C.CString(credentialString), C.get_default_callback())
 	if res != 0 {
-		go func() { utils.RemoveFuture((int)(handle), utils.IndyResult{Error: fmt.Errorf("%v", int(res))}) }()
+		errMsg := utils.GetIndyError(int(res))
+		go func() { utils.RemoveFuture((int)(handle), utils.IndyResult{Error: errors.New(errMsg)}) }()
 		return future
 	}
 
@@ -84,7 +87,8 @@ func IndyOpenWallet(config Config, credential Credential) chan utils.IndyResult 
 	credentialString := string(jsonCredential)
 	commandHandle := (C.indy_handle_t)(handle)
 	if res := C.indy_open_wallet(commandHandle, C.CString(configString), C.CString(credentialString), C.get_int_callback()); res != 0 {
-		go func() { utils.RemoveFuture((int)(handle), utils.IndyResult{Error: fmt.Errorf("%v", int(res))}) }()
+		errMsg := utils.GetIndyError(int(res))
+		go func() { utils.RemoveFuture((int)(handle), utils.IndyResult{Error: errors.New(errMsg)}) }()
 		return future
 	}
 
@@ -108,7 +112,8 @@ func IndyExportWallet(walletHandle int, config ExportConfig) chan utils.IndyResu
 	commandHandle := (C.indy_handle_t)(handle)
 	wh := (C.indy_handle_t)(walletHandle)
 	if res := C.indy_export_wallet(commandHandle, wh, C.CString(configString), C.get_default_callback()); res != 0 {
-		go func() { utils.RemoveFuture((int)(handle), utils.IndyResult{Error: fmt.Errorf("%v", int(res))}) }()
+		errMsg := utils.GetIndyError(int(res))
+		go func() { utils.RemoveFuture((int)(handle), utils.IndyResult{Error: errors.New(errMsg)}) }()
 		return future
 	}
 
